@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}JobConnect – Find Your Dream Job{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════════════════ -->
+<section class="hero-section">
+  <div class="hero-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+  <div class="container hero-content">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-8">
+        <div class="hero-badge mb-3">
+          <i class="bi bi-lightning-fill me-1"></i>
+          {{ stats.jobs }} Jobs Available Now
+        </div>
+        <h1 class="hero-title">Find the Job<br><span class="text-gradient">You Deserve</span></h1>
+        <p class="hero-subtitle">Connect with top employers. Discover opportunities that match your skills and ambitions.</p>
+
+        <!-- Search Bar -->
+        <form action="{{ url_for('job_list') }}" method="GET" class="hero-search-form mt-4">
+          <div class="search-bar-wrapper">
+            <div class="search-field">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" name="keyword" class="form-control search-input" placeholder="Job title, keyword..."/>
+            </div>
+            <div class="search-divider"></div>
+            <div class="search-field">
+              <i class="bi bi-geo-alt search-icon"></i>
+              <input type="text" name="location" class="form-control search-input" placeholder="Location..."/>
+            </div>
+            <button type="submit" class="btn btn-search">
+              <i class="bi bi-search me-2"></i>Search Jobs
+            </button>
+          </div>
+        </form>
+
+        <div class="hero-tags mt-3">
+          <span class="tag-label">Popular:</span>
+          <a href="{{ url_for('job_list', category='Technology') }}" class="hero-tag">Technology</a>
+          <a href="{{ url_for('job_list', category='Marketing') }}" class="hero-tag">Marketing</a>
+          <a href="{{ url_for('job_list', category='Design') }}" class="hero-tag">Design</a>
+          <a href="{{ url_for('job_list', category='Finance') }}" class="hero-tag">Finance</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═════════════════════════════════════════════════════════════════ -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-num">{{ stats.jobs }}</span>
+        <span class="stat-label"><i class="bi bi-briefcase me-1"></i>Active Jobs</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ stats.employers }}</span>
+        <span class="stat-label"><i class="bi bi-building me-1"></i>Companies</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ stats.seekers }}</span>
+        <span class="stat-label"><i class="bi bi-people me-1"></i>Job Seekers</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-num">{{ stats.apps }}</span>
+        <span class="stat-label"><i class="bi bi-send me-1"></i>Applications</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CATEGORIES ════════════════════════════════════════════════════════════ -->
+{% if categories %}
+<section class="section-padded">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Browse by Category</h2>
+      <p class="section-sub">Explore opportunities across industries</p>
+    </div>
+    <div class="row g-3">
+      {% set icons = {'Technology':'laptop','Marketing':'megaphone','Design':'palette','Finance':'cash-coin','Healthcare':'heart-pulse','Education':'book','Sales':'graph-up-arrow','Engineering':'gear','HR':'person-badge','Management':'diagram-3'} %}
+      {% for cat in categories %}
+      <div class="col-6 col-md-3">
+        <a href="{{ url_for('job_list', category=cat.category) }}" class="category-card">
+          <div class="cat-icon">
+            <i class="bi bi-{{ icons.get(cat.category, 'briefcase') }}"></i>
+          </div>
+          <div class="cat-name">{{ cat.category }}</div>
+          <div class="cat-count">{{ cat.cnt }} jobs</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ RECENT JOBS ════════════════════════════════════════════════════════════ -->
+{% if recent_jobs %}
+<section class="section-padded bg-light-custom">
+  <div class="container">
+    <div class="section-header d-flex justify-content-between align-items-end">
+      <div>
+        <h2 class="section-title">Latest Opportunities</h2>
+        <p class="section-sub mb-0">Fresh jobs posted this week</p>
+      </div>
+      <a href="{{ url_for('job_list') }}" class="btn btn-outline-primary btn-sm">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4 mt-1">
+      {% for job in recent_jobs %}
+      <div class="col-md-6 col-lg-4">
+        <div class="job-card h-100">
+          <div class="job-card-header">
+            <div class="company-logo-placeholder">
+              {{ job.company[0]|upper }}
+            </div>
+            <div class="job-type-badge type-{{ job.job_type|replace(' ','-')|lower }}">
+              {{ job.job_type }}
+            </div>
+          </div>
+          <h5 class="job-title mt-3">{{ job.title }}</h5>
+          <p class="job-company">{{ job.company }}</p>
+          <div class="job-meta">
+            <span><i class="bi bi-geo-alt me-1"></i>{{ job.location }}</span>
+            {% if job.salary %}
+            <span><i class="bi bi-currency-dollar me-1"></i>{{ job.salary }}</span>
+            {% endif %}
+          </div>
+          <p class="job-desc">{{ job.description[:120] }}{% if job.description|length > 120 %}...{% endif %}</p>
+          <div class="job-card-footer">
+            <span class="job-date"><i class="bi bi-clock me-1"></i>{{ job.created_at[:10] }}</span>
+            <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-primary btn-sm">
+              View Job <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ CTA SECTION ═══════════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <div class="row align-items-center">
+        <div class="col-md-7">
+          <h2 class="cta-title">Ready to Find Your Next Role?</h2>
+          <p class="cta-sub">Join thousands of professionals who found their dream jobs through JobConnect.</p>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+          {% if not current_user_id %}
+          <a href="{{ url_for('register') }}" class="btn btn-light btn-lg me-2">
+            <i class="bi bi-person-plus me-2"></i>Register Free
+          </a>
+          {% endif %}
+          <a href="{{ url_for('job_list') }}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-search me-2"></i>Browse Jobs
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Employer Dashboard – JobConnect{% endblock %}
+
+{% block content %}
+<div class="page-header-light">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="page-title"><i class="bi bi-building me-2"></i>Employer Dashboard</h1>
+        <p class="page-sub">Manage your job listings and review applications</p>
+      </div>
+      <a href="{{ url_for('post_job') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Post New Job
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-primary-light"><i class="bi bi-briefcase text-primary"></i></div>
+        <div class="stat-card-num">{{ jobs|length }}</div>
+        <div class="stat-card-label">Total Listings</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-success-light"><i class="bi bi-check-circle text-success"></i></div>
+        <div class="stat-card-num">{{ jobs | selectattr('is_active','equalto',1) | list | length }}</div>
+        <div class="stat-card-label">Active Jobs</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <div class="stat-card-icon bg-info-light"><i class="bi bi-people text-info"></i></div>
+        <div class="stat-card-num">{{ total_apps }}</div>
+        <div class="stat-card-label">Total Applications</div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="fw-bold mb-3">My Job Listings</h4>
+
+  {% if jobs %}
+  <div class="row g-3">
+    {% for job in jobs %}
+    <div class="col-12">
+      <div class="employer-job-card {% if not job.is_active %}inactive{% endif %}">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="company-logo-sm">{{ job.company[0]|upper }}</div>
+            <div>
+              <h6 class="mb-0 fw-bold">{{ job.title }}</h6>
+              <small class="text-muted">
+                <i class="bi bi-geo-alt me-1"></i>{{ job.location }} ·
+                <i class="bi bi-calendar3 me-1"></i>{{ job.created_at[:10] }}
+              </small>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="job-type-badge type-{{ job.job_type|replace(' ','-')|lower }}">{{ job.job_type }}</span>
+            {% if job.is_active %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-secondary">Inactive</span>
+            {% endif %}
+            <a href="{{ url_for('job_applications', job_id=job.id) }}" class="btn btn-outline-info btn-sm">
+              <i class="bi bi-people me-1"></i>Applicants
+            </a>
+            <a href="{{ url_for('edit_job', job_id=job.id) }}" class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-pencil me-1"></i>Edit
+            </a>
+            <a href="{{ url_for('delete_job', job_id=job.id) }}" class="btn btn-outline-danger btn-sm"
+               onclick="return confirm('Remove this job listing?')">
+              <i class="bi bi-trash me-1"></i>Remove
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-briefcase"></i></div>
+    <h4>No job listings yet</h4>
+    <p class="text-muted">Post your first job and start finding great candidates!</p>
+    <a href="{{ url_for('post_job') }}" class="btn btn-primary">
+      <i class="bi bi-plus-circle me-2"></i>Post a Job
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

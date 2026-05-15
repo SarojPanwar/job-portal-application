@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}{{ job.title }} – JobConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <div class="job-detail-card">
+        <div class="job-detail-header">
+          <div class="company-logo-lg">{{ job.company[0]|upper }}</div>
+          <div>
+            <span class="job-type-badge type-{{ job.job_type|replace(' ','-')|lower }}">{{ job.job_type }}</span>
+            {% if job.category %}<span class="category-pill ms-2">{{ job.category }}</span>{% endif %}
+          </div>
+        </div>
+
+        <h1 class="detail-job-title mt-3">{{ job.title }}</h1>
+        <h4 class="detail-company">{{ job.company }}</h4>
+
+        <div class="detail-meta-row">
+          <div class="detail-meta-item">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>{{ job.location }}</span>
+          </div>
+          {% if job.salary %}
+          <div class="detail-meta-item">
+            <i class="bi bi-cash-stack"></i>
+            <span>{{ job.salary }}</span>
+          </div>
+          {% endif %}
+          <div class="detail-meta-item">
+            <i class="bi bi-clock-history"></i>
+            <span>Posted {{ job.created_at[:10] }}</span>
+          </div>
+        </div>
+
+        <hr class="my-4"/>
+
+        <div class="detail-section">
+          <h5 class="detail-section-title"><i class="bi bi-file-text me-2"></i>Job Description</h5>
+          <div class="detail-text">{{ job.description | replace('\n', '<br>') | safe }}</div>
+        </div>
+
+        {% if job.requirements %}
+        <div class="detail-section mt-4">
+          <h5 class="detail-section-title"><i class="bi bi-check2-square me-2"></i>Requirements</h5>
+          <div class="detail-text">{{ job.requirements | replace('\n', '<br>') | safe }}</div>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+          <a href="{{ url_for('job_list') }}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left me-1"></i>Back to Jobs
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="apply-card sticky-top" style="top:90px">
+        <h5 class="apply-card-title">Apply for this Job</h5>
+
+        {% if current_user_id %}
+          {% if current_role == 'seeker' %}
+            {% if already_applied %}
+              <div class="applied-badge">
+                <i class="bi bi-check-circle-fill me-2"></i>You've already applied!
+              </div>
+              <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary w-100 mt-3">
+                <i class="bi bi-speedometer2 me-2"></i>View My Applications
+              </a>
+            {% else %}
+              <p class="apply-card-sub">Ready to take the next step in your career?</p>
+              <a href="{{ url_for('apply_job', job_id=job.id) }}" class="btn btn-primary btn-lg w-100">
+                <i class="bi bi-send me-2"></i>Apply Now
+              </a>
+            {% endif %}
+          {% elif current_role == 'employer' %}
+            <div class="alert alert-info mb-0">
+              <i class="bi bi-info-circle me-2"></i>Employer accounts cannot apply for jobs.
+            </div>
+          {% elif current_role == 'admin' %}
+            <div class="alert alert-info mb-0">
+              <i class="bi bi-shield-check me-2"></i>Viewing as Admin.
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="apply-card-sub">Login or register to apply for this position.</p>
+          <a href="{{ url_for('login') }}" class="btn btn-primary w-100 mb-2">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login to Apply
+          </a>
+          <a href="{{ url_for('register') }}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-person-plus me-2"></i>Create Account
+          </a>
+        {% endif %}
+
+        <hr class="my-4"/>
+        <h6 class="fw-semibold mb-3">Job Overview</h6>
+        <ul class="overview-list">
+          <li><i class="bi bi-briefcase"></i><strong>Job Type:</strong> {{ job.job_type }}</li>
+          <li><i class="bi bi-tag"></i><strong>Category:</strong> {{ job.category }}</li>
+          <li><i class="bi bi-geo-alt"></i><strong>Location:</strong> {{ job.location }}</li>
+          {% if job.salary %}<li><i class="bi bi-cash"></i><strong>Salary:</strong> {{ job.salary }}</li>{% endif %}
+          <li><i class="bi bi-calendar3"></i><strong>Posted:</strong> {{ job.created_at[:10] }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
