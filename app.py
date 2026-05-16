@@ -6,6 +6,8 @@ Supports SQLite locally AND PostgreSQL on Render automatically.
 No manual switching needed — just set DATABASE_URL on Render.
 """
 
+from gc import get_count
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session, g
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -267,7 +269,14 @@ def inject_user():
         current_username=session.get('username')
     )
 
-
+def get_count(query, params=()):
+    row = db_execute(query, params, fetchone=True)
+    if row is None:
+        return 0
+    try:
+        return row[0]
+    except (KeyError, TypeError):
+        return row.get('count', 0)
 # ═══════════════════════════════════════════════════════════════════════════════
 # PUBLIC ROUTES
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -279,11 +288,11 @@ def index():
         fetchall=True
     )
     stats = {
-        "jobs":      (db_execute("SELECT COUNT(*) FROM jobs WHERE is_active=1", fetchone=True) or [0])[0],
-        "employers": (db_execute("SELECT COUNT(*) FROM users WHERE role='employer'", fetchone=True) or [0])[0],
-        "seekers":   (db_execute("SELECT COUNT(*) FROM users WHERE role='seeker'", fetchone=True) or [0])[0],
-        "apps":      (db_execute("SELECT COUNT(*) FROM applications", fetchone=True) or [0])[0],
-    }
+    "jobs":      get_count("SELECT COUNT(*) FROM jobs WHERE is_active=1"),
+    "employers": get_count("SELECT COUNT(*) FROM users WHERE role='employer'"),
+    "seekers":   get_count("SELECT COUNT(*) FROM users WHERE role='seeker'"),
+    "apps":      get_count("SELECT COUNT(*) FROM applications"),
+}
     categories = db_execute(
         "SELECT category, COUNT(*) as cnt FROM jobs WHERE is_active=1 GROUP BY category ORDER BY cnt DESC LIMIT 8",
         fetchall=True
@@ -424,10 +433,11 @@ def dashboard():
             "SELECT * FROM jobs WHERE employer_id=? ORDER BY created_at DESC",
             (uid,), fetchall=True
         ) or []
-        total_apps = (db_execute(
-            "SELECT COUNT(*) FROM applications a JOIN jobs j ON a.job_id=j.id WHERE j.employer_id=?",
-            (uid,), fetchone=True
-        ) or [0])[0]
+
+        total_apps = get_count(
+        "SELECT COUNT(*) FROM applications a JOIN jobs j ON a.job_id=j.id WHERE j.employer_id=?",
+        (uid,)
+        )
         return render_template("dashboard_employer.html", jobs=jobs, total_apps=total_apps)
 
     elif session["role"] == "admin":
