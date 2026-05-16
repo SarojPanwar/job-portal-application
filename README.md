@@ -6,22 +6,6 @@ Supports three user roles: **Job Seeker**, **Employer**, and **Admin** — each 
 
 ---
 
-## 📌 Table of Contents
-
-- [About the Project](#-about-the-project)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Database Schema](#-database-schema)
-- [Setup Instructions](#-setup-instructions)
-- [Default Admin Credentials](#-default-admin-credentials)
-- [How to Use](#-how-to-use)
-- [Deployment Guide](#-deployment-guide)
-- [Security Notes](#-security-notes)
-- [Check User Activity](#-check-user-activity-admin)
-
----
-
 ## 📖 About the Project
 
 **JobConnect** is a full-stack web application where:
@@ -30,7 +14,7 @@ Supports three user roles: **Job Seeker**, **Employer**, and **Admin** — each 
 - **Employers** can post new job listings, manage their postings, and review/accept/reject applicants.
 - **Admins** get a complete control panel to manage all users, jobs, and applications across the platform.
 
-Built as a final project for learning Flask, this app demonstrates:
+Built  a  project for learning Flask, this app demonstrates:
 - User authentication with hashed passwords
 - Role-based access control (RBAC)
 - SQLite database with relational tables
@@ -174,7 +158,7 @@ Make sure you have installed:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/job-portal.git
+git clone https://github.com/SarojPanwar/job-portal-application.git
 cd job-portal
 ```
 
@@ -213,9 +197,6 @@ Open `app.py` and find:
 app.secret_key = "job_portal_secret_key_change_in_production"
 ```
 
-**For local development:** the current value is fine.
-
-**For production deployment:** generate a secure random key:
 
 ```python
 # Run this once in Python terminal to get a key:
@@ -229,16 +210,6 @@ Then use an environment variable (safer than hardcoding):
 ```python
 import os
 app.secret_key = os.environ.get("SECRET_KEY", "dev-fallback-only")
-```
-
-Set the variable in your terminal before running:
-
-```bash
-# Windows:
-set SECRET_KEY=paste_your_generated_key_here
-
-# Mac/Linux:
-export SECRET_KEY=paste_your_generated_key_here
 ```
 
 ---
@@ -259,19 +230,6 @@ Expected output:
 Open browser → **http://127.0.0.1:5000**
 
 The database file `job_portal.db` is created automatically on first run.
-
----
-
-## 🔐 Default Admin Credentials
-
-| Field    | Value                   |
-|----------|-------------------------|
-| Email    | admin@jobportal.com     |
-| Password | admin123                |
-| Role     | Admin                   |
-
-> ⚠️ Change these immediately before deploying to production!
-> Update the `init_db()` function in `app.py` with your preferred admin email/password.
 
 ---
 
@@ -329,12 +287,9 @@ ORDER BY a.applied_at DESC;
 
 ## 📸 Screenshots
 
+![alt text](image-1.png)
 
-```
-![Homepage](screenshots/home.png)
-![Job Listings](screenshots/jobs.png)
-![Admin Dashboard](screenshots/admin.png)
-```
+
 
 ---
 
