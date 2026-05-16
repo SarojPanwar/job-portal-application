@@ -93,7 +93,7 @@
             <div class="job-meta mb-2">
               <span><i class="bi bi-geo-alt me-1"></i>{{ job.location }}</span>
               {% if job.salary %}<span><i class="bi bi-wallet2 me-1"></i>{{ job.salary }}</span>{% endif %}
-              <span><i class="bi bi-clock me-1"></i>{{ job.created_at[:10] }}</span>
+              <span><i class="bi bi-clock me-1"></i>{{  job.created_at | string | truncate(10, False, '') }}</span>
             </div>
             <p class="job-list-desc mb-0">{{ job.description[:180] }}{% if job.description|length > 180 %}...{% endif %}</p>
           </div>

@@ -31,7 +31,7 @@
           {% endif %}
           <div class="detail-meta-item">
             <i class="bi bi-clock-history"></i>
-            <span>Posted {{ job.created_at[:10] }}</span>
+            <span>Posted {{  job.created_at | string | truncate(10, False, '') }}</span>
           </div>
         </div>
 

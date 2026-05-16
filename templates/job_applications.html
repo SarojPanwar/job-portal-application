@@ -24,7 +24,7 @@
             <div>
               <h6 class="mb-0 fw-bold">{{ app.username }}</h6>
               <small class="text-muted"><i class="bi bi-envelope me-1"></i>{{ app.email }}</small>
-              <br><small class="text-muted"><i class="bi bi-clock me-1"></i>Applied {{ app.applied_at[:10] }}</small>
+              <br><small class="text-muted"><i class="bi bi-clock me-1"></i>Applied {{  app.applied_at | string | truncate(10, False, '') }}</small>
             </div>
           </div>
           <div class="d-flex align-items-center gap-2 flex-wrap">
