@@ -287,9 +287,7 @@ ORDER BY a.applied_at DESC;
 
 ## 📸 Screenshots
 
-![alt text](image.png)
-
-
+![Homepage](./screenshot/homepage.png)
 
 ---
 
