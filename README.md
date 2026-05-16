@@ -287,7 +287,7 @@ ORDER BY a.applied_at DESC;
 
 ## 📸 Screenshots
 
-![alt text](image-1.png)
+![alt text](image.png)
 
 
 
